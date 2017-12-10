@@ -17,7 +17,7 @@ namespace day9
     {
         static int SkipGarbage(Stack<char> garbage)
         {
-            char ch;        
+            char ch;
             int garbageCount = 0;
             while (true)
             {
@@ -25,16 +25,18 @@ namespace day9
                 if (ch == '!')
                 {
                     garbage.Pop();
-                    garbage.Pop();                    
+                    garbage.Pop();
                 }
                 else if (ch == '>')
                 {
                     garbage.Pop();
                     return garbageCount - 1;
-                } else {
+                }
+                else
+                {
                     garbage.Pop();
                     garbageCount++;
-                }                                
+                }
             }
         }
 
@@ -106,8 +108,8 @@ namespace day9
 
         static int CalculateGroupScore(List<Group> groups)
         {
-            return groups.Sum(group => 
-                group.SubGroups.Count() == 0 ? group.Level : group.Level + CalculateGroupScore(group.SubGroups));            
+            return groups.Sum(group =>
+                group.SubGroups.Count() == 0 ? group.Level : group.Level + CalculateGroupScore(group.SubGroups));
         }
 
         static int CountGarbage(List<Group> groups)
@@ -117,31 +119,10 @@ namespace day9
         }
         static void Main(string[] args)
         {
-            string[] tests = {
-                "{}",
-                "{{{}}}",
-                "{{},{}}",
-                "{{{},{},{{}}}}",
-                "{<a>,<a>,<a>,<a>}",
-                "{{<ab>},{<ab>},{<ab>},{<ab>}}",
-                "{{<!!>},{<!!>},{<!!>},{<!!>}}",
-                "{{<a!>},{<a!>},{<a!>},{<ab>}}"
-
-            };
-
             var input = File.ReadAllText("input.txt").ToCharArray();
-
-            foreach (var test in tests) {
-                var answer = Tokenize(new Stack<char>(test.ToCharArray().Reverse()));
-                Console.WriteLine(CalculateGroupScore(answer));
-            }
-
             var tokens = Tokenize(new Stack<char>(input.Reverse()));
             Console.WriteLine(CalculateGroupScore(tokens));
             Console.WriteLine(CountGarbage(tokens));
-
-            
-
         }
     }
 }
