@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace day10
 {
@@ -34,7 +36,8 @@ namespace day10
         }
         static void Main(string[] args)
         {
-            var lengths = new int[] { 206, 63, 255, 131, 65, 80, 238, 157, 254, 24, 133, 2, 16, 0, 1, 3 };
+            var input = File.ReadAllText("input.txt");
+            int[] lengths = input.Split(',').Select(x => Int32.Parse(x)).ToArray();
             var start = new Knot
             {
                 list = Enumerable.Range(0, 256).ToList(),
@@ -45,6 +48,17 @@ namespace day10
             var part1 = lengths.Aggregate(start, Step);
             Console.WriteLine(part1.list[0] * part1.list[1]);
 
+            var chars = Encoding.ASCII.GetBytes(input.ToCharArray()).Concat(new Byte[] { 17, 31, 73, 47, 23 });
+            start = new Knot
+            {
+                list = Enumerable.Range(0, 256).ToList(),
+                pos = 0,
+                skip = 0
+            };
+            var sparse = Enumerable.Range(0, 64).Aggregate(start, (knot, _) => chars.Select(c => (int)c).Aggregate(knot, Step)).list;
+            var dense = Enumerable.Range(0, 16).Select(set => Enumerable.Range(set * 16, 16).Aggregate(0, (a, b) => a ^ sparse[b]));
+            var part2 = string.Concat(dense.Select(dec => dec.ToString("X").PadLeft(2, '0')));
+            Console.WriteLine(part2);
         }
     }
 }
