@@ -9,10 +9,9 @@ namespace day13
     {
         static int GetScannerPosition(int range, int pico)
         {
-            var wave = Enumerable.Range(0, range)
+            return Enumerable.Range(0, range)
                 .Concat(Enumerable.Range(1, range - 2).Reverse())
-                .ToArray();
-            return wave[pico % wave.Length];
+                .ElementAt(pico % (2 * range - 2));
         }
 
         static int GetSeverity(Dictionary<int, int> input, int delay = 0)
@@ -32,9 +31,8 @@ namespace day13
 
             // part2
             var delay = 0;
-            while (true)
-            {
-                if (GetSeverity(input, delay) == 0) break;
+            while (GetSeverity(input, delay) != 0)
+            {                
                 delay++;
             }
             Console.WriteLine(delay);
