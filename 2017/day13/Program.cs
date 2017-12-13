@@ -18,12 +18,12 @@ namespace day13
         static int GetSeverity(Dictionary<int, int> input, int delay = 0)
         {
             return Enumerable.Range(0, input.Keys.Max() + 1).Select(p =>
-                input.ContainsKey(p) && GetScannerPosition(input[p], p + delay) == 0 ? p * input[p] : 0
+                input.ContainsKey(p) && GetScannerPosition(input[p], p + delay) == 0 ? (p + delay) * input[p] : 0
             ).Sum();
         }
         static void Main(string[] args)
         {
-            var input = File.ReadLines("exampleinput.txt")
+            var input = File.ReadLines("input.txt")
                 .Select(line => line.Split(": "))
                 .ToDictionary(p => Int32.Parse(p[0]), p => Int32.Parse(p[1]));
 
@@ -31,14 +31,13 @@ namespace day13
             Console.WriteLine(part1);
 
             // part2
-            // var delay = 0;
-            // while (true)
-            // {
-            //     if (GetSeverity(input, delay) == 0) break;
-            //     delay++;
-            // }
-            // Console.WriteLine(delay);
-            //Console.WriteLine(GetSeverity(input, 4));
+            var delay = 0;
+            while (true)
+            {
+                if (GetSeverity(input, delay) == 0) break;
+                delay++;
+            }
+            Console.WriteLine(delay);
         }
     }
 }
