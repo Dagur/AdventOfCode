@@ -7,7 +7,7 @@ import Day2 from './solutions/day02'
 
 class App extends React.Component {
   getAnswer (day) {
-    return Day2.part1()
+    return Day2.part2()
   }
 
   render () {
