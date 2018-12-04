@@ -6,6 +6,8 @@
   "main": "src/index.js",
   "dependencies": {
     "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-standard": "^4.0.0",
     "ramda": "^0.26.1",
     "react": "16.5.2",
     "react-dom": "16.5.2",
