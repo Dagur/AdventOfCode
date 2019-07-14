@@ -5,14 +5,14 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-node": "^8.0.0",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-standard": "^4.0.0",
     "ramda": "^0.26.1",
-    "react": "16.5.2",
-    "react-dom": "16.5.2",
-    "react-scripts": "2.0.3",
-    "standard": "^12.0.1"
+    "react": "^16.8.6",
+    "react-dom": "16.8.6",
+    "react-scripts": "^3.0.1",
+    "standard": "^13.0.2"
   },
   "devDependencies": {},
   "scripts": {
