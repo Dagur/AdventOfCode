@@ -46,6 +46,7 @@ int problem_1(const vector<string> &changes)
 
 int problem_2(const vector<string> &changes)
 {
+    const int vsize = changes.size();
     int sum{0};
     unordered_set<int> history{0};
     int el{0};
@@ -66,7 +67,7 @@ int problem_2(const vector<string> &changes)
             return sum;
         }
         history.insert(sum);
-        el = (el + 1) % changes.size();
+        el = (el + 1) % vsize;
     }
 }
 

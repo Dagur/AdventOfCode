@@ -232,3 +232,6 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+2018/day1/aoc
+
+**/.vscode/
