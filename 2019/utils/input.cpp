@@ -3,11 +3,9 @@
 #include <string>
 #include <fstream>
 
-using namespace std;
-
-vector<string> read_input_vs(const string &filename)
+std::vector<std::string> read_input_vs(const std::string &filename)
 {
-    ifstream input{filename};
+    std::ifstream input{filename};
 
     if (!input.is_open())
     {
@@ -15,8 +13,8 @@ vector<string> read_input_vs(const string &filename)
         exit(EXIT_FAILURE);
     }
 
-    string line;
-    vector<string> lines;
+    std::string line;
+    std::vector<std::string> lines;
     while (getline(input, line))
     {
         lines.push_back(line);
@@ -25,9 +23,9 @@ vector<string> read_input_vs(const string &filename)
     return lines;
 }
 
-vector<int> read_input_vi(const string &filename)
+std::vector<int> read_input_vi(const std::string &filename)
 {
-    ifstream input{filename};
+    std::ifstream input{filename};
 
     if (!input.is_open())
     {
@@ -35,11 +33,11 @@ vector<int> read_input_vi(const string &filename)
         exit(EXIT_FAILURE);
     }
 
-    string line;
-    vector<int> result;
+    std::string line;
+    std::vector<int> result;
     int start = 0, end;
     getline(input, line);
-    while ((end = line.find(',', start)) != string::npos)
+    while ((end = line.find(',', start)) != std::string::npos)
     {
         result.push_back(stoi(line.substr(start, end - start)));
         start = end + 1;
