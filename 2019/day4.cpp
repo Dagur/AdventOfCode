@@ -8,7 +8,7 @@ bool is_valid(const int val)
 {
     stringstream ss;
     ss << val;
-    char ch, prev = 47;
+    char ch, prev = 0;
     bool adjacent = false, decrease = false;
 
     while (ss.get(ch))
