@@ -28,7 +28,7 @@ bool has_double(const int val)
     const string text = to_string(val);
     string::const_iterator text_iter = text.cbegin();
 
-    while (regex_search(text_iter, text.end(), matches, pat))
+    while (regex_search(text_iter, text.cend(), matches, pat))
     {
         if (matches[0].length() == 2)
         {
