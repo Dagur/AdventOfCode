@@ -122,36 +122,18 @@ int computer(vector<int> input)
             cout << "Diagnostic code: " << input[op.index_c(i, input)] << endl;
             i += op.parameters + 1;
             break;
-        case JUMP_NONZERO:
-            if (input[op.index_c(i, input)] != 0)
-            {
-                input[i] = input[op.index_b(i, input)];
-                i = input[i];
-            }
-            else
-            {
-                i += op.parameters + 1;
-            }
+        case JUMP_NONZERO:    
+            i = (input[op.index_c(i, input)] != 0) ? input[op.index_b(i, input)] : i + op.parameters + 1;
             break;
         case JUMP_ZERO:
-            if (input[op.index_c(i, input)] == 0)
-            {
-                input[i] = input[op.index_b(i, input)];
-                i = input[i];
-            }
-            else
-            {
-                i += op.parameters + 1;
-            }
+            i = (input[op.index_c(i, input)] == 0) ? input[op.index_b(i, input)] : i + op.parameters + 1;
             break;
         case LT_TEST:
-            input[op.index_a(i, input)] =
-                (input[op.index_c(i, input)] < input[op.index_b(i, input)]) ? 1 : 0;
+            input[op.index_a(i, input)] = (input[op.index_c(i, input)] < input[op.index_b(i, input)]) ? 1 : 0;
             i += op.parameters + 1;
             break;
         case EQ_TEST:
-            input[op.index_a(i, input)] =
-                (input[op.index_c(i, input)] == input[op.index_b(i, input)]) ? 1 : 0;
+            input[op.index_a(i, input)] = (input[op.index_c(i, input)] == input[op.index_b(i, input)]) ? 1 : 0;
             i += op.parameters + 1;
             break;
         case HALT:
@@ -169,5 +151,5 @@ int main()
 {
     const vector<int> input = read_input_vi("./input/5/5.txt");
 
-    computer({1,0,3,3,1005,2,10,5,1,0,4,1,99});
+    computer(input);
 }
