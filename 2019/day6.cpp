@@ -3,7 +3,8 @@
 #include <algorithm>
 #include <iterator>
 #include <iostream>
-#include "utils/input.h"
+#include <vector>
+#include "utils/input.hpp"
 
 using namespace std;
 

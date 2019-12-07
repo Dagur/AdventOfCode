@@ -2,7 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include "./utils/input.h"
+#include <vector>
+#include "./utils/input.hpp"
 
 using namespace std;
 

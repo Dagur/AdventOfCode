@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 
-#include "utils/input.h"
+#include "utils/input.hpp"
 
 using namespace std;
 
