@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include "./utils/input.cpp"
+#include "./utils/input.h"
 
 using namespace std;
 

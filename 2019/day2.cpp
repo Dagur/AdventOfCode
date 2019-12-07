@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "utils/input.cpp"
+#include "utils/input.h"
 
 using namespace std;
 

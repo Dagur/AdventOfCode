@@ -1,5 +1,6 @@
 #include <memory>
-#include "utils/input.cpp"
+#include <iostream>
+#include "utils/input.h"
 
 using namespace std;
 

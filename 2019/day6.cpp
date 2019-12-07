@@ -2,7 +2,8 @@
 #include <numeric>
 #include <algorithm>
 #include <iterator>
-#include "utils/input.cpp"
+#include <iostream>
+#include "utils/input.h"
 
 using namespace std;
 
