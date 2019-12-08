@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <memory>
 
 std::vector<std::string> read_input_vs(const std::string &filename)
 {

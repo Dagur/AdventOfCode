@@ -10,5 +10,5 @@ g++ input.o day4.o -o build/day4
 g++ intcode.o input.o day5.o -o build/day5 
 g++ input.o day6.o -o build/day6 
 g++ intcode.o input.o day7.o -o build/day7 
-
+g++ input.o day8.o -o build/day8 
 rm *.o
