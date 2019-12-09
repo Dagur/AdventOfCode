@@ -18,12 +18,12 @@ public:
     Operation(const int instr);
     Instruction instruction;
     int parameters;
-    int index_a(const int offset, const std::vector<int> &input);
-    
-    int index_b(const int offset, const std::vector<int> &input);
-    
-    int index_c(const int offset, const std::vector<int> &input);
-    
+    int index_a(const int offset, const std::vector<long> &input);
+
+    int index_b(const int offset, const std::vector<long> &input);
+
+    int index_c(const int offset, const std::vector<long> &input);
+
 };
 
-int computer(std::vector<int> input, std::deque<int> args = {});
+long computer(std::vector<long> input, std::deque<long> args = {});

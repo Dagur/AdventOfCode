@@ -17,22 +17,31 @@ enum Instruction
     JUMP_NONZERO,
     JUMP_ZERO,
     LT_TEST,
-    EQ_TEST
+    EQ_TEST,
+    ADJUST_REL
+};
+
+enum Mode
+{
+    POSITION,
+    IMMEDIATE,
+    RELATIVE
 };
 
 class Operation
 {
 public:
     Operation(){};
-    Operation(const int instr)
+    Operation(const int instr, const int rel_base)
     {
         unique_ptr<char[]> buffer(new char[6]);
         sprintf(&buffer[0], "%05d", instr);
         string val = string(buffer.get());
+        relative_base = rel_base;
 
-        a_immediate = val[0] == '1';
-        b_immediate = val[1] == '1';
-        c_immediate = val[2] == '1';
+        a_mode = get_mode(val[0]);
+        b_mode = get_mode(val[1]);
+        c_mode = get_mode(val[2]);
 
         switch (instr % 100)
         {
@@ -68,6 +77,10 @@ public:
             instruction = EQ_TEST;
             parameters = 3;
             break;
+        case 9:
+            instruction = ADJUST_REL;
+            parameters = 1;
+            break;
         case 99:
             instruction = HALT;
             parameters = 0;
@@ -80,32 +93,58 @@ public:
     };
     Instruction instruction;
     int parameters = 0;
-    int index_a(const int offset, const vector<int> &input)
+    int index_a(const int pos, const vector<long> &input)
     {
-        return a_immediate ? offset + 3 : input[offset + 3];
+        return index(a_mode, pos, 3, input);
     }
-    int index_b(const int offset, const vector<int> &input)
+    int index_b(const int pos, const vector<long> &input)
     {
-        return b_immediate ? offset + 2 : input[offset + 2];
+        return index(b_mode, pos, 2, input);
     }
-    int index_c(const int offset, const vector<int> &input)
+    int index_c(const int pos, const vector<long> &input)
     {
-        return c_immediate ? offset + 1 : input[offset + 1];
+        return index(c_mode, pos, 1, input);
     }
 
 private:
-    bool a_immediate = false, b_immediate = false, c_immediate = false;
+    int relative_base;
+    Mode a_mode = POSITION, b_mode = POSITION, c_mode = POSITION;
+    Mode get_mode(const char val)
+    {
+        switch (val)
+        {
+        case '1':
+            return IMMEDIATE;
+        case '2':
+            return RELATIVE;
+        default: // '0'
+            return POSITION;
+        }
+    }
+    int index(const Mode mode, const int pos, const int offset, const vector<long> &input)
+    {
+        switch (mode)
+        {
+        case IMMEDIATE:
+            return pos + offset;
+        case RELATIVE:
+            return relative_base + pos;
+        default: // POSITION
+            return input[pos + offset];
+        }
+    }
 };
 
-int computer(vector<int> input, deque<int> args = {})
+long computer(vector<long> input, deque<long> args = {})
 {
     Operation op;
     int user_input;
-    int return_value = 0;
+    long return_value = 0;
+    int relative_base = 0;
 
     for (int i = 0; i < input.size();)
     {
-        op = Operation(input[i]);
+        op = Operation(input[i], relative_base);
 
         switch (op.instruction)
         {
@@ -118,11 +157,13 @@ int computer(vector<int> input, deque<int> args = {})
             i += op.parameters + 1;
             break;
         case INPUT:
-            if (args.size() > 0) {
+            if (args.size() > 0)
+            {
                 user_input = args.front();
                 args.pop_front();
             }
-            else {
+            else
+            {
                 cout << "Enter number: ";
                 cin >> user_input;
             }
@@ -148,6 +189,9 @@ int computer(vector<int> input, deque<int> args = {})
             input[op.index_a(i, input)] = (input[op.index_c(i, input)] == input[op.index_b(i, input)]) ? 1 : 0;
             i += op.parameters + 1;
             break;
+        case ADJUST_REL:
+            relative_base += input[op.index_c(i, input)];
+            i += op.parameters + 1;
         case HALT:
             cout << "Halted " << endl;
             return return_value;
