@@ -93,17 +93,26 @@ public:
     };
     Instruction instruction;
     int parameters = 0;
-    int index_a(const int pos, const vector<long> &input)
+    int index_a(const int pos, const vector<long> &input, const bool for_writing = false)
     {
-        return index(a_mode, pos, 3, input);
+        return index(a_mode, pos + 3, input, for_writing);
     }
-    int index_b(const int pos, const vector<long> &input)
+    int index_b(const int pos, const vector<long> &input, const bool for_writing = false)
     {
-        return index(b_mode, pos, 2, input);
+        return index(b_mode, pos + 2, input, for_writing);
     }
-    int index_c(const int pos, const vector<long> &input)
+    int index_c(const int pos, const vector<long> &input, const bool for_writing = false)
     {
-        return index(c_mode, pos, 1, input);
+        return index(c_mode, pos + 1, input, for_writing);
+    }
+
+    void print_debug()
+    {
+        cout << "Instruction: " << instruction << endl;
+        cout << "Parameters: " << parameters << endl;
+        cout << "Relative base: " << relative_base << endl;
+        cout << "-------------------" << endl;
+        cin.get();
     }
 
 private:
@@ -121,21 +130,24 @@ private:
             return POSITION;
         }
     }
-    int index(const Mode mode, const int pos, const int offset, const vector<long> &input)
+    int index(const Mode mode, const int pos, const vector<long> &input, const bool for_writing)
     {
-        switch (mode)
+        if (mode == RELATIVE)
         {
-        case IMMEDIATE:
-            return pos + offset;
-        case RELATIVE:
-            return relative_base + pos;
-        default: // POSITION
-            return input[pos + offset];
+            return relative_base + input[pos];
+        }
+        else if (mode == IMMEDIATE && !for_writing)
+        {
+            return pos;
+        }
+        else
+        { //POSITION
+            return input[pos];
         }
     }
 };
 
-long computer(vector<long> input, deque<long> args = {})
+long computer(vector<long> input, deque<long> &args)
 {
     Operation op;
     int user_input;
@@ -145,15 +157,16 @@ long computer(vector<long> input, deque<long> args = {})
     for (int i = 0; i < input.size();)
     {
         op = Operation(input[i], relative_base);
+        //op.print_debug();
 
         switch (op.instruction)
         {
         case ADD:
-            input[op.index_a(i, input)] = input[op.index_c(i, input)] + input[op.index_b(i, input)];
+            input[op.index_a(i, input, true)] = input[op.index_c(i, input)] + input[op.index_b(i, input)];
             i += op.parameters + 1;
             break;
         case MULTIPLY:
-            input[op.index_a(i, input)] = input[op.index_c(i, input)] * input[op.index_b(i, input)];
+            input[op.index_a(i, input, true)] = input[op.index_c(i, input)] * input[op.index_b(i, input)];
             i += op.parameters + 1;
             break;
         case INPUT:
@@ -167,11 +180,12 @@ long computer(vector<long> input, deque<long> args = {})
                 cout << "Enter number: ";
                 cin >> user_input;
             }
-            input[input[i + 1]] = user_input;
+            input[op.index_c(i, input, true)] = user_input;
             i += op.parameters + 1;
             break;
         case OUTPUT:
             return_value = input[op.index_c(i, input)];
+            // args.push_back(return_value);
             cout << "Diagnostic code: " << return_value << endl;
             i += op.parameters + 1;
             break;
@@ -182,16 +196,17 @@ long computer(vector<long> input, deque<long> args = {})
             i = (input[op.index_c(i, input)] == 0) ? input[op.index_b(i, input)] : i + op.parameters + 1;
             break;
         case LT_TEST:
-            input[op.index_a(i, input)] = (input[op.index_c(i, input)] < input[op.index_b(i, input)]) ? 1 : 0;
+            input[op.index_a(i, input, true)] = (input[op.index_c(i, input)] < input[op.index_b(i, input)]) ? 1 : 0;
             i += op.parameters + 1;
             break;
         case EQ_TEST:
-            input[op.index_a(i, input)] = (input[op.index_c(i, input)] == input[op.index_b(i, input)]) ? 1 : 0;
+            input[op.index_a(i, input, true)] = (input[op.index_c(i, input)] == input[op.index_b(i, input)]) ? 1 : 0;
             i += op.parameters + 1;
             break;
         case ADJUST_REL:
             relative_base += input[op.index_c(i, input)];
             i += op.parameters + 1;
+            break;
         case HALT:
             cout << "Halted " << endl;
             return return_value;

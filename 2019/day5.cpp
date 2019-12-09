@@ -9,7 +9,8 @@
 
 int main()
 {
-    const std::vector<int> input = read_input_vi("./input/5/5.txt");
+    const std::vector<long> input = read_input_vl("./input/5/5.txt");
+    std::deque<long> args;
 
-    computer(input);
+    computer(input, args);
 }

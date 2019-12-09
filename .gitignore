@@ -235,3 +235,4 @@ _Pvt_Extensions
 2018/day1/aoc
 
 **/.vscode/
+*.o
