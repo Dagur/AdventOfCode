@@ -8,22 +8,17 @@
 #include <math.h>
 #include "utils/input.hpp"
 
-using Starmap = std::vector<std::string>;
 using Point = std::pair<int, int>;
 
-enum Direction
+enum Quadrant
 {
-    N,
     NE,
-    E,
     SE,
-    S,
     SW,
-    W,
     NW
 };
 
-std::vector<Point> get_points(const Starmap &map)
+std::vector<Point> get_points(const std::vector<std::string> &map)
 {
     std::vector<Point> res;
     const int rowlength = map.front().size();
@@ -40,45 +35,7 @@ std::vector<Point> get_points(const Starmap &map)
     return res;
 }
 
-Direction get_direction(const Point &from, const Point &to)
-{
-    if (from.first == to.first)
-    {
-        return from.second < to.second ? N : S;
-    }
-    else if (from.first < to.first)
-    {
-        if (from.second == to.second)
-        {
-            return E;
-        }
-        else if (from.second < to.second)
-        {
-            return NE;
-        }
-        else
-        {
-            return SE;
-        }
-    }
-    else
-    {
-        if (from.second == to.second)
-        {
-            return W;
-        }
-        else if (from.second < to.second)
-        {
-            return NW;
-        }
-        else
-        {
-            return SW;
-        }
-    }
-}
-
-Direction get_quadrant(const Point &center, const Point &point)
+Quadrant get_quadrant(const Point &center, const Point &point)
 {
     if (center.first <= point.first)
     {
@@ -106,10 +63,8 @@ Direction get_quadrant(const Point &center, const Point &point)
 
 int get_number_of_connections(const Point &point, const std::vector<Point> &asteroids)
 {
-    std::set<std::pair<float, Direction>> slopes;
-    int above = 0, below = 0;
+    std::set<std::pair<float, Quadrant>> slopes;
     float slope;
-    Direction dir;
     for (Point p : asteroids)
     {
         if (p == point)
@@ -118,7 +73,7 @@ int get_number_of_connections(const Point &point, const std::vector<Point> &aste
         }
 
         slope = (float)(p.second - point.second) / (float)(p.first - point.first);
-        slopes.insert({slope, get_direction(point, p)});
+        slopes.insert({slope, get_quadrant(point, p)});
     }
     return slopes.size();
 }
@@ -140,13 +95,11 @@ std::pair<Point, int> part1(const std::vector<Point> &asteroids)
 
 int part2(const std::vector<Point> &asteroids, const Point &station)
 {
-    int res = 0;
-    int x = station.first;
     float slope, dist;
     double inf = std::numeric_limits<float>::infinity();
     double lowest = std::numeric_limits<float>::lowest();
 
-    std::unordered_map<Direction, std::map<float, std::map<float, Point>>> cycle;
+    std::unordered_map<Quadrant, std::map<float, std::map<float, Point>>> cycle;
     for (Point point : asteroids)
     {
         if (point == station)
@@ -162,24 +115,27 @@ int part2(const std::vector<Point> &asteroids, const Point &station)
         cycle[get_quadrant(station, point)][slope][dist] = point;
     }
 
-    int sum = 0;
+    int pointCount = 0;
+    int res = 0;
 
-    while (sum < 36)
+    while (pointCount < 201)
     {
-        for (Direction dir : {NE, SE, SW, NW})
+        for (Quadrant dir : {NE, SE, SW, NW})
         {
             for (auto slopeMap : cycle[dir])
             {
                 auto asteroidsInLine = slopeMap.second;
                 if (!asteroidsInLine.empty())
                 {
-                    sum += 1;
-                    auto nearestInLine = (*asteroidsInLine.begin());
-                    if (sum == 200)
+                    pointCount += 1;
+                    auto closest = (*asteroidsInLine.begin());
+                    Point closestPoint = closest.second;
+                    if (pointCount == 200)
                     {
-                        res = nearestInLine.second.first * 100 + nearestInLine.second.second;
+                        res = closestPoint.first * 100 + closestPoint.second;
                     }
-                    std::cout << sum << ": (" << nearestInLine.second.first << ", " << nearestInLine.second.second << ")" << std::endl;
+                    std::cout << pointCount << ": (" << closestPoint.first << ", "
+                              << closestPoint.second << ")" << std::endl;
                     asteroidsInLine.erase(asteroidsInLine.begin());
                 }
             }
@@ -191,13 +147,13 @@ int part2(const std::vector<Point> &asteroids, const Point &station)
 
 int main()
 {
-    Starmap map = read_input_vs("./input/10/10.txt");
+    std::vector<std::string> map = read_input_vs("./input/10/10.txt");
     const std::vector<Point> asteroids = get_points(map);
 
     int connections;
     Point station;
     std::tie(station, connections) = part1(asteroids);
-    
+
     std::cout << "Part 1: (" << station.first << "," << station.second
               << ") connections: " << connections << std::endl;
 
