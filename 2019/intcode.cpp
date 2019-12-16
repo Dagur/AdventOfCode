@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <deque>
 #include "utils/input.hpp"
 
 using namespace std;
@@ -151,17 +152,25 @@ struct State
     int index = 0;
     std::vector<long> program{};
     int relative_base = 0;
-    long diagnostic_code = 0;
+    std::deque<long> diagnostic_codes;
     int input_index = 0;
     bool waiting_for_input = false;
     bool halted = false;
     void provide_input(int arg);
+    long read_output();
 };
 
 void State::provide_input(int arg)
 {
     program[input_index] = arg;
     waiting_for_input = false;
+}
+long State::read_output()
+{
+    if (diagnostic_codes.size() < 1) { return -1; }
+    const long ret = diagnostic_codes.front();
+    diagnostic_codes.pop_front();
+    return ret;
 }
 
 State computer(State &state)
@@ -191,8 +200,8 @@ State computer(State &state)
             return state;
             break;
         case OUTPUT:
-            state.diagnostic_code = program[op.index_c(i, program)];
-            // cout << "Diagnostic code: " << state.diagnostic_code << endl;
+            state.diagnostic_codes.push_back(program[op.index_c(i, program)]);
+            // cout << "Diagnostic code: " << program[op.index_c(i, program)] << endl;
             i += op.parameters + 1;
             break;
         case JUMP_NONZERO:
@@ -221,6 +230,5 @@ State computer(State &state)
             return state;
         }
     }
-
     return state;
 }

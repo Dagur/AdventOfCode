@@ -28,13 +28,14 @@ public:
 struct State
 {
     int index = 0;
-    std::vector<long> program {};
+    std::vector<long> program{};
     int relative_base = 0;
-    long diagnostic_code = 0;
+    std::deque<long> diagnostic_codes;
     int input_index = 0;
     bool waiting_for_input = false;
     bool halted = false;
     void provide_input(int arg);
+    long read_output();
 };
 
 
