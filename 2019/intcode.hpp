@@ -25,4 +25,17 @@ public:
     int index_c(const int offset, const std::vector<long> &input);
 };
 
-long computer(std::vector<long> input, std::deque<long> &args);
+struct State
+{
+    int index = 0;
+    std::vector<long> program {};
+    int relative_base = 0;
+    long diagnostic_code = 0;
+    int input_index = 0;
+    bool waiting_for_input = false;
+    bool halted = false;
+    void provide_input(int arg);
+};
+
+
+State computer(State &state);

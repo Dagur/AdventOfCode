@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <deque>
 #include <algorithm>
 #include "intcode.hpp"
 #include "utils/input.hpp"
@@ -11,34 +10,54 @@ using namespace std;
 int amplify(const vector<long> &input, const vector<int> &phase_settings)
 {
     int ret = 0;
-    
     for (int i = 0; i <= 4; i++)
     {
-        deque<long> args = {phase_settings[i], ret};
-        ret = computer(input, args);
+        State state;
+        state.program = input;
+        state = computer(state);
+        state.provide_input(phase_settings[i]);
+        state = computer(state);
+        state.provide_input(ret);
+        state = computer(state);
+        ret = state.diagnostic_code;
     }
     return ret;
 }
 
 int feedback_amplify(const vector<long> &input, const vector<int> &phase_settings)
 {
-    int val = 0;
-    int max = 0;
-
-    deque<long> signals;
-    vector<int> computers;
-
-    for (int i = 0; i <= 4; i = (i + 1) % 4)
+    vector<State> states;
+    int io = 0;
+    for (auto val : phase_settings)
     {
-        signals.push_back(phase_settings[i]);
-        computer(input, signals);
-        if (val < max)
+        State s;
+        s.program = input;
+        s = computer(s);
+        s.provide_input(val);
+        s = computer(s);
+        states.push_back(s);
+        io = s.diagnostic_code;
+    }
+
+    for (int i = 0; i < states.size(); i = (i + 1) % states.size())
+    {
+        if (states[i].halted)
         {
             break;
         }
-        max = val;
+        else if (states[i].waiting_for_input)
+        {
+            states[i].provide_input(io);
+            states[i] = computer(states[i]);
+            io = states[i].diagnostic_code;
+        }
+        else
+        {
+            std::cout << "Invalid state" << std::endl;
+            break;
+        }
     }
-    return max;
+    return io;
 }
 
 int part1(const vector<long> &input)
@@ -57,21 +76,26 @@ int part1(const vector<long> &input)
     return max;
 }
 
-// int part2(const vector<int> &input)
-// {
-//     int max = 0;
-//     int val = 0;
-//     vector<int> phase_vals = {9, 8, 7, 6, 5};
-//     return feedback_amplify(input, phase_vals);
-// }
+int part2(const vector<long> &input)
+{
+    int max = 0;
+    int val = 0;
+    vector<int> phase_vals = {5, 6, 7, 8, 9};
+    do
+    {
+        if ((val = feedback_amplify(input, phase_vals)) > max)
+        {
+            max = val;
+        };
+    } while (next_permutation(phase_vals.begin(), phase_vals.end()));
+
+    return max;
+}
 
 int main()
 {
     const vector<long> input = read_input_vl("./input/7/7.txt");
 
-    const vector<long> example = {3, 26, 1001, 26, -4, 26, 3, 27, 1002, 27, 2, 27, 1, 27, 26,
-                                 27, 4, 27, 1001, 28, -1, 28, 1005, 28, 6, 99, 0, 0, 5};
-
     cout << "Part 1: " << part1(input) << endl;
-    //cout << "Part 2: " << part2(example) << endl;
+    cout << "Part 2: " << part2(input) << endl;
 }

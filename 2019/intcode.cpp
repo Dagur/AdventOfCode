@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <deque>
 #include "utils/input.hpp"
 
 using namespace std;
@@ -147,73 +146,81 @@ private:
     }
 };
 
-long computer(vector<long> input, deque<long> &args)
+struct State
+{
+    int index = 0;
+    std::vector<long> program{};
+    int relative_base = 0;
+    long diagnostic_code = 0;
+    int input_index = 0;
+    bool waiting_for_input = false;
+    bool halted = false;
+    void provide_input(int arg);
+};
+
+void State::provide_input(int arg)
+{
+    program[input_index] = arg;
+    waiting_for_input = false;
+}
+
+State computer(State &state)
 {
     Operation op;
-    int user_input;
-    long return_value = 0;
-    int relative_base = 0;
+    std::vector<long> &program = state.program;
 
-    for (int i = 0; i < input.size();)
+    for (int i = state.index; i < program.size();)
     {
-        op = Operation(input[i], relative_base);
+        op = Operation(program[i], state.relative_base);
         //op.print_debug();
 
         switch (op.instruction)
         {
         case ADD:
-            input[op.index_a(i, input, true)] = input[op.index_c(i, input)] + input[op.index_b(i, input)];
+            program[op.index_a(i, program, true)] = program[op.index_c(i, program)] + program[op.index_b(i, program)];
             i += op.parameters + 1;
             break;
         case MULTIPLY:
-            input[op.index_a(i, input, true)] = input[op.index_c(i, input)] * input[op.index_b(i, input)];
+            program[op.index_a(i, program, true)] = program[op.index_c(i, program)] * program[op.index_b(i, program)];
             i += op.parameters + 1;
             break;
         case INPUT:
-            if (args.size() > 0)
-            {
-                user_input = args.front();
-                args.pop_front();
-            }
-            else
-            {
-                cout << "Enter number: ";
-                cin >> user_input;
-            }
-            input[op.index_c(i, input, true)] = user_input;
-            i += op.parameters + 1;
+            state.input_index = op.index_c(i, program, true);
+            state.index = i + op.parameters + 1;
+            state.waiting_for_input = true;
+            return state;
             break;
         case OUTPUT:
-            return_value = input[op.index_c(i, input)];
-            // args.push_back(return_value);
-            cout << "Diagnostic code: " << return_value << endl;
+            state.diagnostic_code = program[op.index_c(i, program)];
+            // cout << "Diagnostic code: " << state.diagnostic_code << endl;
             i += op.parameters + 1;
             break;
         case JUMP_NONZERO:
-            i = (input[op.index_c(i, input)] != 0) ? input[op.index_b(i, input)] : i + op.parameters + 1;
+            i = (program[op.index_c(i, program)] != 0) ? program[op.index_b(i, program)] : i + op.parameters + 1;
             break;
         case JUMP_ZERO:
-            i = (input[op.index_c(i, input)] == 0) ? input[op.index_b(i, input)] : i + op.parameters + 1;
+            i = (program[op.index_c(i, program)] == 0) ? program[op.index_b(i, program)] : i + op.parameters + 1;
             break;
         case LT_TEST:
-            input[op.index_a(i, input, true)] = (input[op.index_c(i, input)] < input[op.index_b(i, input)]) ? 1 : 0;
+            program[op.index_a(i, program, true)] = (program[op.index_c(i, program)] < program[op.index_b(i, program)]) ? 1 : 0;
             i += op.parameters + 1;
             break;
         case EQ_TEST:
-            input[op.index_a(i, input, true)] = (input[op.index_c(i, input)] == input[op.index_b(i, input)]) ? 1 : 0;
+            program[op.index_a(i, program, true)] = (program[op.index_c(i, program)] == program[op.index_b(i, program)]) ? 1 : 0;
             i += op.parameters + 1;
             break;
         case ADJUST_REL:
-            relative_base += input[op.index_c(i, input)];
+            state.relative_base += program[op.index_c(i, program)];
             i += op.parameters + 1;
             break;
         case HALT:
-            cout << "Halted " << endl;
-            return return_value;
+            // cout << "Halted " << endl;
+            state.halted = true;
+            return state;
         default:
-            return 1;
+            return state;
         }
     }
 
-    return 1;
+    return state;
 }

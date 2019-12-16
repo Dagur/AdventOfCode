@@ -67,7 +67,7 @@ std::vector<long> read_input_vl(const std::string &filename)
     std::vector<long> result;
     while (getline(oss, val, ','))
     {
-        result.push_back(std::stoi(val));
+        result.push_back(std::stol(val));
     }
 
     return result;
