@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <deque>
 #include "intcode.hpp"
 #include "utils/input.hpp"
 
@@ -21,5 +22,5 @@ int main()
             state.provide_input(user_input);
         }
     }
-    std::cout << "Result: " << state.diagnostic_code << std::endl;
+    std::cout << "Result: " << state.read_output() << std::endl;
 }

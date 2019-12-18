@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <deque>
 #include <algorithm>
 #include "intcode.hpp"
 #include "utils/input.hpp"
@@ -19,7 +20,7 @@ int amplify(const vector<long> &input, const vector<int> &phase_settings)
         state = computer(state);
         state.provide_input(ret);
         state = computer(state);
-        ret = state.diagnostic_code;
+        ret = state.diagnostic_codes.back();
     }
     return ret;
 }
@@ -36,7 +37,7 @@ int feedback_amplify(const vector<long> &input, const vector<int> &phase_setting
         s.provide_input(val);
         s = computer(s);
         states.push_back(s);
-        io = s.diagnostic_code;
+        io = s.diagnostic_codes.front();
     }
 
     for (int i = 0; i < states.size(); i = (i + 1) % states.size())
@@ -49,7 +50,7 @@ int feedback_amplify(const vector<long> &input, const vector<int> &phase_setting
         {
             states[i].provide_input(io);
             states[i] = computer(states[i]);
-            io = states[i].diagnostic_code;
+            io = states[i].diagnostic_codes.back();
         }
         else
         {
