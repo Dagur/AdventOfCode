@@ -40,12 +40,6 @@ struct Robot
     void paint(const bool is_white)
     {
         grid.at(pos.first).at(pos.second) = is_white;
-
-        // if (std::find(path.begin(), path.end(), pos) == path.end())
-        // {
-        //     // std::cout << "(" << pos.first << ", " << pos.second << ")" << std::endl;
-        //     paintCount++;
-        // }
         painted.insert(pos);
         path.push_back(pos);
     }
@@ -80,7 +74,7 @@ struct Robot
             {
                 if (col)
                 {
-                    std::cout << "##";
+                    std::cout << '#';
                 }
                 else
                 {
@@ -105,16 +99,16 @@ int main()
     while (!state.halted)
     {
         state = computer(state);
-        if (state.waiting_for_input)
-        {
+        // if (state.waiting_for_input)
+        // {
             // std::cout << "Enter number: ";
             // std::cin >> user_input;
             int inp = rob.get_pos_color();
             state.provide_input(inp);
-        }
+        // }
 
-        turn = state.read_output();
         color = state.read_output();
+        turn = state.read_output();
         // std::cout << "Color to paint: " << color << std::endl;
         // std::cout << "Direction to turn: " << turn << std::endl;
         // std::cout << "Pos: " << rob.pos.first << ", " << rob.pos.second << std::endl;
@@ -124,12 +118,13 @@ int main()
         if (turn == 0)
         {
             rob.turn_left();
+            rob.move();
         }
-        else
+        else if (turn == 1)
         {
             rob.turn_right();
+            rob.move();
         }
-        rob.move();
     }
 
     rob.print_grid();

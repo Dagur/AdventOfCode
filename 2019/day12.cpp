@@ -92,7 +92,7 @@ void apply_velocity(std::vector<Planet> &planets)
     }
 }
 
-int get_energy(std::vector<Planet> &planets)
+int get_energy(const std::vector<Planet> &planets)
 {
     int energy = 0;
     for (Planet planet : planets)
@@ -103,16 +103,54 @@ int get_energy(std::vector<Planet> &planets)
     return energy;
 }
 
+int hash(const Planet &planet)
+{
+    int hash = (hash + (324723947 + std::get<0>(planet.pos))) ^93485734985;
+    hash = (hash + (324723947 + std::get<1>(planet.pos))) ^93485734985;
+    hash = (hash + (324723947 + std::get<2>(planet.pos))) ^93485734985;
+    hash = (hash + (324723947 + std::get<0>(planet.vel))) ^93485734985;
+    hash = (hash + (324723947 + std::get<1>(planet.vel))) ^93485734985;
+    hash = (hash + (324723947 + std::get<2>(planet.vel))) ^93485734985;
+    
+    return hash;
+}
+
 int main()
 {
     std::vector<std::string> input = read_input_vs("./input/12/12.txt");
-
     std::vector<Planet> planets = get_planets(input);
-    for (int i = 0; i != 1000; i++)
+    std::vector<int> initial_hashes;
+    int steps = 1000;
+
+    for (Planet planet : planets)
+    {
+        initial_hashes.push_back(hash(planet));
+    } 
+    
+    for (int i = 0; i != steps; i++)
     {
         apply_gravity(planets);
         apply_velocity(planets);
     }
-
+    
     std::cout << "Part 1: " << get_energy(planets) << std::endl;
+    
+    bool same = false;
+    const int no_planets = planets.size();
+    while(!same)
+    {
+        apply_gravity(planets);
+        apply_velocity(planets);
+        for (int i = 0; i != no_planets; i++)
+        {
+            same = initial_hashes[i] == hash(planets[i]);
+            if (!same)
+            {
+                break;
+            }
+        }
+        steps++;
+    }
+    std::cout << "Part 2: " << steps << std::endl;
+
 }
