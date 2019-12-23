@@ -5,8 +5,6 @@
 #include <deque>
 #include "utils/input.hpp"
 
-using namespace std;
-
 enum Instruction
 {
     ADD,
@@ -34,9 +32,9 @@ public:
     Operation(){};
     Operation(const int instr, const int rel_base)
     {
-        unique_ptr<char[]> buffer(new char[6]);
+        std::unique_ptr<char[]> buffer(new char[6]);
         sprintf(&buffer[0], "%05d", instr);
-        string val = string(buffer.get());
+        std::string val = std::string(buffer.get());
         relative_base = rel_base;
 
         a_mode = get_mode(val[0]);
@@ -86,33 +84,33 @@ public:
             parameters = 0;
             break;
         default:
-            cout << "Warning: Invalid instruction " << instr % 100 << endl;
+            std::cout << "Warning: Invalid instruction " << instr % 100 << std::endl;
             instruction = HALT;
             parameters = 0;
         }
     };
     Instruction instruction;
     int parameters = 0;
-    int index_a(const int pos, const vector<long> &input, const bool for_writing = false)
+    int index_a(const int pos, const std::vector<long> &input, const bool for_writing = false)
     {
         return index(a_mode, pos + 3, input, for_writing);
     }
-    int index_b(const int pos, const vector<long> &input, const bool for_writing = false)
+    int index_b(const int pos, const std::vector<long> &input, const bool for_writing = false)
     {
         return index(b_mode, pos + 2, input, for_writing);
     }
-    int index_c(const int pos, const vector<long> &input, const bool for_writing = false)
+    int index_c(const int pos, const std::vector<long> &input, const bool for_writing = false)
     {
         return index(c_mode, pos + 1, input, for_writing);
     }
 
     void print_debug()
     {
-        cout << "Instruction: " << instruction << endl;
-        cout << "Parameters: " << parameters << endl;
-        cout << "Relative base: " << relative_base << endl;
-        cout << "-------------------" << endl;
-        cin.get();
+        std::cout << "Instruction: " << instruction << std::endl;
+        std::cout << "Parameters: " << parameters << std::endl;
+        std::cout << "Relative base: " << relative_base << std::endl;
+        std::cout << "-------------------" << std::endl;
+        std::cin.get();
     }
 
 private:
@@ -130,11 +128,11 @@ private:
             return POSITION;
         }
     }
-    int index(const Mode mode, const int pos, const vector<long> &input, const bool for_writing)
+    int index(const Mode mode, const int pos, const std::vector<long> &input, const bool for_writing)
     {
         if (mode == RELATIVE)
         {
-            return relative_base + input[pos];
+            return relative_base + input.at(pos);
         }
         else if (mode == IMMEDIATE && !for_writing)
         {
@@ -142,7 +140,7 @@ private:
         }
         else
         { //POSITION
-            return input[pos];
+            return input.at(pos);
         }
     }
 };
@@ -162,7 +160,7 @@ struct State
 
 void State::provide_input(int arg)
 {
-    program[input_index] = arg;
+    program.at(input_index) = arg;
     waiting_for_input = false;
 }
 long State::read_output()
@@ -180,17 +178,17 @@ State computer(State &state)
 
     for (int i = state.index; i < program.size();)
     {
-        op = Operation(program[i], state.relative_base);
+        op = Operation(program.at(i), state.relative_base);
         //op.print_debug();
 
         switch (op.instruction)
         {
         case ADD:
-            program[op.index_a(i, program, true)] = program[op.index_c(i, program)] + program[op.index_b(i, program)];
+            program.at(op.index_a(i, program, true)) = program.at(op.index_c(i, program)) + program.at(op.index_b(i, program));
             i += op.parameters + 1;
             break;
         case MULTIPLY:
-            program[op.index_a(i, program, true)] = program[op.index_c(i, program)] * program[op.index_b(i, program)];
+            program.at(op.index_a(i, program, true)) = program.at(op.index_c(i, program)) * program.at(op.index_b(i, program));
             i += op.parameters + 1;
             break;
         case INPUT:
@@ -200,26 +198,26 @@ State computer(State &state)
             return state;
             break;
         case OUTPUT:
-            state.diagnostic_codes.push_back(program[op.index_c(i, program)]);
-            // cout << "Diagnostic code: " << program[op.index_c(i, program)] << endl;
+            state.diagnostic_codes.push_back(program.at(op.index_c(i, program)));
+            // cout << "Diagnostic code: " << program.at(op.index_c(i, program)) << endl;
             i += op.parameters + 1;
             break;
         case JUMP_NONZERO:
-            i = (program[op.index_c(i, program)] != 0) ? program[op.index_b(i, program)] : i + op.parameters + 1;
+            i = (program.at(op.index_c(i, program)) != 0) ? program.at(op.index_b(i, program)) : i + op.parameters + 1;
             break;
         case JUMP_ZERO:
-            i = (program[op.index_c(i, program)] == 0) ? program[op.index_b(i, program)] : i + op.parameters + 1;
+            i = (program.at(op.index_c(i, program)) == 0) ? program.at(op.index_b(i, program)) : i + op.parameters + 1;
             break;
         case LT_TEST:
-            program[op.index_a(i, program, true)] = (program[op.index_c(i, program)] < program[op.index_b(i, program)]) ? 1 : 0;
+            program.at(op.index_a(i, program, true)) = (program.at(op.index_c(i, program)) < program.at(op.index_b(i, program))) ? 1 : 0;
             i += op.parameters + 1;
             break;
         case EQ_TEST:
-            program[op.index_a(i, program, true)] = (program[op.index_c(i, program)] == program[op.index_b(i, program)]) ? 1 : 0;
+            program.at(op.index_a(i, program, true)) = (program.at(op.index_c(i, program)) == program.at(op.index_b(i, program))) ? 1 : 0;
             i += op.parameters + 1;
             break;
         case ADJUST_REL:
-            state.relative_base += program[op.index_c(i, program)];
+            state.relative_base += program.at(op.index_c(i, program));
             i += op.parameters + 1;
             break;
         case HALT:
