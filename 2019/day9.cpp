@@ -11,6 +11,7 @@ int main()
     const std::vector<long> input = read_input_vl("./input/9/9.txt");
     State state;
     state.program = input;
+    state.program.resize(state.program.size() * 4);
     int user_input;
     while (!state.halted)
     {
