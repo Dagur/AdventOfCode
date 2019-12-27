@@ -36,8 +36,8 @@ int part1(const vector<int> &input)
 int part2(const vector<int> &input) {
     constexpr int target = 19690720;
 
-    for (int noun = 0; noun < 100; noun++){
-        for (int verb = 0; verb < 100; verb++) {
+    for (int noun = 0; noun < 100; ++noun){
+        for (int verb = 0; verb < 100; ++verb) {
             if (computer(input, noun, verb) == target) {
                 return 100 * noun + verb;
             }

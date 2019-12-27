@@ -22,9 +22,9 @@ std::vector<Point> get_points(const std::vector<std::string> &map)
 {
     std::vector<Point> res;
     const int rowlength = map.front().size();
-    for (int i = 0; i != map.size(); i++)
+    for (int i = 0; i != map.size(); ++i)
     {
-        for (int j = 0; j != rowlength; j++)
+        for (int j = 0; j != rowlength; ++j)
         {
             if (map[i][j] == '#')
             {

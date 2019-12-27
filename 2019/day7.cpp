@@ -11,7 +11,7 @@ using namespace std;
 int amplify(const vector<long> &input, const vector<int> &phase_settings)
 {
     int ret = 0;
-    for (int i = 0; i <= 4; i++)
+    for (int i = 0; i <= 4; ++i)
     {
         State state;
         state.program = input;

@@ -8,39 +8,8 @@
 
 struct Planet
 {
-    std::tuple<int, int, int> pos;
-    std::tuple<int, int, int> vel;
-
-    int &get_pos(const int i)
-    {
-        switch (i)
-        {
-        case 0:
-            return std::get<0>(pos);
-        case 1:
-            return std::get<1>(pos);
-        case 2:
-            return std::get<2>(pos);
-        default:
-            perror("Invalid index");
-            exit(EXIT_FAILURE);
-        }
-    };
-    int &get_vel(const int i)
-    {
-        switch (i)
-        {
-        case 0:
-            return std::get<0>(vel);
-        case 1:
-            return std::get<1>(vel);
-        case 2:
-            return std::get<2>(vel);
-        default:
-            perror("Invalid index");
-            exit(EXIT_FAILURE);
-        }
-    };
+    std::array<int, 3> pos;
+    std::array<int, 3> vel;
 };
 
 std::vector<Planet> get_planets(const std::vector<std::string> &input)
@@ -61,21 +30,21 @@ std::vector<Planet> get_planets(const std::vector<std::string> &input)
 void apply_gravity(std::vector<Planet> &planets)
 {
     const int no_planets = planets.size();
-    for (int i = 0; i != no_planets; i++)
+    for (int i = 0; i != no_planets; ++i)
     {
-        for (int j = i + 1; j != no_planets; j++)
+        for (int j = i + 1; j != no_planets; ++j)
         {
-            for (int k = 0; k != 3; k++)
+            for (int k = 0; k != 3; ++k)
             {
-                if (planets[i].get_pos(k) < planets[j].get_pos(k))
+                if (planets[i].pos[k] < planets[j].pos[k])
                 {
-                    planets[i].get_vel(k) += 1;
-                    planets[j].get_vel(k) -= 1;
+                    planets[i].vel[k] += 1;
+                    planets[j].vel[k] -= 1;
                 }
-                else if (planets[i].get_pos(k) > planets[j].get_pos(k))
+                else if (planets[i].pos[k] > planets[j].pos[k])
                 {
-                    planets[i].get_vel(k) -= 1;
-                    planets[j].get_vel(k) += 1;
+                    planets[i].vel[k] -= 1;
+                    planets[j].vel[k] += 1;
                 }
             }
         }
@@ -84,11 +53,11 @@ void apply_gravity(std::vector<Planet> &planets)
 
 void apply_velocity(std::vector<Planet> &planets)
 {
-    for (int i = 0; i != planets.size(); i++)
+    for (int i = 0; i != planets.size(); ++i)
     {
-        planets[i].get_pos(0) += planets[i].get_vel(0);
-        planets[i].get_pos(1) += planets[i].get_vel(1);
-        planets[i].get_pos(2) += planets[i].get_vel(2);
+        planets[i].pos[0] += planets[i].vel[0];
+        planets[i].pos[1] += planets[i].vel[1];
+        planets[i].pos[2] += planets[i].vel[2];
     }
 }
 
@@ -98,59 +67,43 @@ int get_energy(const std::vector<Planet> &planets)
     for (Planet planet : planets)
     {
         energy +=
-            (std::abs(planet.get_pos(0)) + std::abs(planet.get_pos(1)) + std::abs(planet.get_pos(2))) * (std::abs(planet.get_vel(0)) + std::abs(planet.get_vel(1)) + std::abs(planet.get_vel(2)));
+            (std::abs(planet.pos[0]) + std::abs(planet.pos[1]) + std::abs(planet.pos[2])) * (std::abs(planet.vel[0]) + std::abs(planet.vel[1]) + std::abs(planet.vel[2]));
     }
     return energy;
 }
 
-int hash(const Planet &planet)
+bool are_equal(const std::vector<Planet> &start, const std::vector<Planet> &state)
 {
-    int hash = (hash + (324723947 + std::get<0>(planet.pos))) ^93485734985;
-    hash = (hash + (324723947 + std::get<1>(planet.pos))) ^93485734985;
-    hash = (hash + (324723947 + std::get<2>(planet.pos))) ^93485734985;
-    hash = (hash + (324723947 + std::get<0>(planet.vel))) ^93485734985;
-    hash = (hash + (324723947 + std::get<1>(planet.vel))) ^93485734985;
-    hash = (hash + (324723947 + std::get<2>(planet.vel))) ^93485734985;
-    
-    return hash;
+    for (int i = 0; i != start.size(); ++i)
+    {
+        if (!(start[i].pos == state[i].pos && start[i].vel == state[i].vel))
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 int main()
 {
     std::vector<std::string> input = read_input_vs("./input/12/12.txt");
-    std::vector<Planet> planets = get_planets(input);
-    std::vector<int> initial_hashes;
-    int steps = 1000;
+    const std::vector<Planet> start = get_planets(input);
+    auto planets = start;
+    long steps = 1000;
 
-    for (Planet planet : planets)
-    {
-        initial_hashes.push_back(hash(planet));
-    } 
-    
-    for (int i = 0; i != steps; i++)
+    for (int i = 0; i != steps; ++i)
     {
         apply_gravity(planets);
         apply_velocity(planets);
     }
-    
+
     std::cout << "Part 1: " << get_energy(planets) << std::endl;
-    
-    bool same = false;
-    const int no_planets = planets.size();
-    while(!same)
+
+    while (!are_equal(start, planets))
     {
         apply_gravity(planets);
         apply_velocity(planets);
-        for (int i = 0; i != no_planets; i++)
-        {
-            same = initial_hashes[i] == hash(planets[i]);
-            if (!same)
-            {
-                break;
-            }
-        }
-        steps++;
+        ++steps;
     }
     std::cout << "Part 2: " << steps << std::endl;
-
 }

@@ -43,7 +43,7 @@ bool has_double(const int val)
 int part1(const int start, const int end)
 {
     int sum = 0;
-    for (int i = start; i <= end; i++)
+    for (int i = start; i <= end; ++i)
     {
         if (is_valid(i))
         {
@@ -57,7 +57,7 @@ int part1(const int start, const int end)
 int part2(const int start, const int end)
 {
     int sum = 0;
-    for (int i = start; i <= end; i++)
+    for (int i = start; i <= end; ++i)
     {
         if (is_valid(i) && has_double(i))
         {

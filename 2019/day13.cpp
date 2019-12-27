@@ -27,7 +27,7 @@ int main()
     // {
     //     if (point.second == 2)
     //     {
-    //         count++;
+    //         ++count;
     //     }
     // }
 

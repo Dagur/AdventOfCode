@@ -84,9 +84,9 @@ int part2(const Wire &wire1, const Wire &wire2)
 {
     int steps = -1;
 
-    for (int i = 0; i != wire1.size(); i++)
+    for (int i = 0; i != wire1.size(); ++i)
     {
-        for (int j = 0; j != wire2.size(); j++)
+        for (int j = 0; j != wire2.size(); ++j)
         {
             if (wire1[i] == wire2[j] && (steps == -1 || i + j < steps))
             {
