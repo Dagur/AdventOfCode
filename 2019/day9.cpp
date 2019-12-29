@@ -8,7 +8,7 @@
 
 int main()
 {
-    const std::vector<long> input = read_input_vl("./input/9/9.txt");
+    const std::vector<long> input = read_input("./input/9/9.txt");
     State state;
     state.program = input;
     state.program.resize(state.program.size() * 4);

@@ -8,7 +8,7 @@
 
 int main()
 {
-    const std::vector<long> input = read_input_vl("./input/5/5.txt");
+    const std::vector<long> input = read_input("./input/5/5.txt");
     State state;
     state.program = input;
     int user_input;

@@ -173,7 +173,7 @@ void part2(const std::vector<long> &input)
 
 int main()
 {
-    std::vector<long> input = read_input_vl("./input/11/11.txt");
+    std::vector<long> input = read_input("./input/11/11.txt");
 
     std::cout << "Part1 :" << part1(input) << std::endl;
     std::cout << "Part2 :" << std::endl;

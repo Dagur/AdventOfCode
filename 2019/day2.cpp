@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int computer(vector<int> input, int noun, int verb)
+int computer(vector<long> input, int noun, int verb)
 {
     input[1] = noun;
     input[2] = verb;
@@ -28,12 +28,12 @@ int computer(vector<int> input, int noun, int verb)
     return 0;
 }
 
-int part1(const vector<int> &input)
+int part1(const vector<long> &input)
 {
     return computer(input, 12, 2);
 }
 
-int part2(const vector<int> &input) {
+int part2(const vector<long> &input) {
     constexpr int target = 19690720;
 
     for (int noun = 0; noun < 100; ++noun){
@@ -49,7 +49,7 @@ int part2(const vector<int> &input) {
 
 int main()
 {
-    const vector<int> input = read_input_vi("./input/2/2.txt");
+    const vector<long> input = read_input("./input/2/2.txt");
 
     cout << "Part 1: " << part1(input) << endl;
     cout << "Part 2: " << part2(input) << endl;
