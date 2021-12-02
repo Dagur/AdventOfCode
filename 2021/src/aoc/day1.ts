@@ -1,11 +1,11 @@
 import { readFile } from "./util.ts";
 
-async function getParsed(inputFileName: string): number {
+async function getParsed(inputFileName: string): number[] {
   const data = await readFile(inputFileName);
   return data.split("\n").map(line => parseInt(line));
 }
 
-async function part1(inputFileName: string) {
+async function part1(inputFileName: string): number {
   const data = await getParsed(inputFileName);
   let count = 0;
   let prev: number;
@@ -32,8 +32,8 @@ async function part2(inputFileName: string): number {
   return count;
 }
 
-const day1 = {
+const functions = {
   part1,
   part2,
-}
-export default day1;
+};
+export default functions;
