@@ -1,5 +1,5 @@
-import day1 from "./aoc/day1.ts";
-import day2 from "./aoc/day2.ts";
+import day1 from "./aoc/day1";
+import day2 from "./aoc/day2";
 
 describe("Day 1", () => {
   describe("Part 1", () => {

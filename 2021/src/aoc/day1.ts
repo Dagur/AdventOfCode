@@ -1,14 +1,14 @@
-import { readFile } from "./util.ts";
+import { readFile } from "./util";
 
-async function getParsed(inputFileName: string): number[] {
-  const data = await readFile(inputFileName);
-  return data.split("\n").map(line => parseInt(line));
+async function getParsed(inputFileName: string): Promise<number[]> {
+  const data: any = await readFile(inputFileName);
+  return data.split("\n").map((line: string) => parseInt(line));
 }
 
-async function part1(inputFileName: string): number {
+async function part1(inputFileName: string): Promise<number> {
   const data = await getParsed(inputFileName);
   let count = 0;
-  let prev: number;
+  let prev: number | void;
   for (const depth of data) {
     if (prev && prev < depth) {
       count += 1;
@@ -18,12 +18,13 @@ async function part1(inputFileName: string): number {
   return count;
 }
 
-async function part2(inputFileName: string): number {
+async function part2(inputFileName: string): Promise<number> {
   const data = await getParsed(inputFileName);
   let count = 0;
-  let prev: number;
+  let prev: number | void;
   for (let i = 0; i < data.length; i++) {
-    const window = data[i] + data[(i + 1) % data.length] + data[(i + 2) % data.length];
+    const window =
+      data[i] + data[(i + 1) % data.length] + data[(i + 2) % data.length];
     if (prev && prev < window) {
       count += 1;
     }
