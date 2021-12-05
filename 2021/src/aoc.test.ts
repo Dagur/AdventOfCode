@@ -1,5 +1,6 @@
 import day1 from "./aoc/day1";
 import day2 from "./aoc/day2";
+import day3 from "./aoc/day3";
 
 describe("Day 1", () => {
   describe("Part 1", () => {
@@ -43,6 +44,29 @@ describe("Day 2", () => {
     test("input 1", async () => {
       const result = await day2.part2("/inputs/day2.txt");
       expect(result).toEqual(1765720035);
+    });
+  });
+});
+
+describe("Day 3", () => {
+  describe("Part 1", () => {
+    test("example 1", async () => {
+      const result = await day3.part1("/examples/day3.txt");
+      expect(result).toEqual(198);
+    });
+    test("input 1", async () => {
+      const result = await day3.part1("/inputs/day3.txt");
+      expect(result).toEqual(3429254);
+    });
+  });
+  describe("Part 2", () => {
+    test("example 1", async () => {
+      const result = await day3.part2("/examples/day3.txt");
+      expect(result).toEqual(230);
+    });
+    test("input 1", async () => {
+      const result = await day3.part2("/inputs/day3.txt");
+      expect(result).toEqual(5410338);
     });
   });
 });
