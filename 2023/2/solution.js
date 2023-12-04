@@ -52,9 +52,25 @@ function sumPossible(games) {
     .reduce((acc, i) => acc + i, 0);
 }
 
-console.log(input.at(-1))
+function findPower(games) {
+  let power = 0;
+  for (let i = 0; i < games.length; i++) {
+    const sets = games[i];
+    let redMin = greenMin = blueMin = 0;
+    for (let j = 0; j < sets.length; j++) {
+      const set = sets[j];
+      redMin = Math.max(set.get("red") ?? 0, redMin);
+      greenMin = Math.max(set.get("green") ?? 0, greenMin);
+      blueMin = Math.max(set.get("blue") ?? 0, blueMin);
+    }
+    power += redMin * greenMin * blueMin;
+  }
+  return power;
+}
 
 console.log({
   solutionExample1: sumPossible(toArray(example1)),
   solution1: sumPossible(input),
+  solutionExample2: findPower(toArray(example1)),
+  solution2: findPower(input),
 });
