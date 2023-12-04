@@ -3,7 +3,6 @@ const filename = "input.txt";
 const example1 = "1abc2\npqr3stu8vwx\na1b2c3d4e5f\ntreb7uchet";
 const example2 =
   "two1nine\neightwothree\nabcone2threexyz\nxtwone3four\n4nineeightseven2\nzoneight234\n7pqrstsixteen";
-// const example2 = "eightwothree";
 
 const content = fs.readFileSync(process.cwd() + "/" + filename).toString();
 
@@ -37,19 +36,11 @@ function replaceWithNumber(content) {
     n: { i: { n: { e: 9 } } },
   };
 
-  let phrase = ""
-  let phrase2 = ""
   let ret = "";
   let matches = [];
   for (let i = 0; i < content.length; i++) {
     const c = content[i];
-    phrase += c;
     if (!isNaN(Number(c)) || c === "\n") {
-      phrase2 += c
-      if (c === "\n") {
-        console.log(phrase, phrase2)
-        phrase = phrase2 = "";
-      }
       ret += c;
       matches = [];
     } else {
@@ -58,22 +49,18 @@ function replaceWithNumber(content) {
         .concat(lu[c])
         .filter(Boolean);
 
-      const val = matches.map((m) => Number(m)).find((n) => !isNaN(n));
-      if (val) {
-        phrase2 += val.toString();
-        ret += val.toString();
-        matches = [];
+      const index = matches.findIndex((m) => !isNaN(Number(m)));
+      if (index > -1) {
+        ret += matches[index];
+        matches.splice(index, 1);
       }
     }
   }
 
-  return ret || "\n";
+  return ret;
 }
 
-const solution1 = getSum(content);
-const solution2 = getSum(replaceWithNumber(content));
-
 console.log({
-  solution1,
-  solution2,
+  solution1: getSum(content),
+  solution2: getSum(replaceWithNumber(content)),
 });
