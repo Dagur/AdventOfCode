@@ -17,7 +17,7 @@ function toArray(content) {
     .map(([hand, bet]) => [hand, Number(bet)]);
 }
 
-function sortHands(hands) {
+function sortHands(hands, joker) {
   function getVal(c) {
     switch (c) {
       case "A":
@@ -27,7 +27,7 @@ function sortHands(hands) {
       case "Q":
         return 12;
       case "J":
-        return 11;
+        return joker ? 1 : 11;
       case "T":
         return 10;
       default:
@@ -54,7 +54,37 @@ function sortHands(hands) {
   return hands.sort(comparator);
 }
 
-function getTypes(input) {
+function useJokers(hand) {
+  const jokers = hand[3];
+  if (jokers === 0) {
+    return hand;
+  }
+  hand[3] = 0;
+  if (jokers === 5) {
+    hand[0] = 5;
+    return hand;
+  }
+
+  let idx = hand.findIndex((x) => x > 2);
+  if (idx > -1) {
+    hand[idx] += jokers;
+    return hand;
+  }
+  idx = hand.findIndex((x) => x === 2);
+  if (idx > -1) {
+    hand[idx] += jokers;
+    return hand;
+  }
+  idx = hand.findIndex((x) => x === 1);
+  if (idx > -1) {
+    hand[idx] += jokers;
+    return hand;
+  }
+
+  return hand;
+}
+
+function getTypes(input, joker) {
   const ret = {
     fiveoak: [],
     fouroak: [],
@@ -65,7 +95,7 @@ function getTypes(input) {
     highcard: [],
   };
   for (const [hand] of input) {
-    const values = new Array(13).fill(0);
+    let values = new Array(13).fill(0);
     for (let i = 0; i < 5; i++) {
       switch (hand[i]) {
         case "A":
@@ -108,6 +138,9 @@ function getTypes(input) {
           values[12]++;
           break;
       }
+    }
+    if (joker) {
+      values = useJokers(values);
     }
     const multiples = values.filter((x) => x > 1);
     if (multiples.length === 1) {
@@ -158,18 +191,26 @@ function calculateWinnings(input, types) {
     }
   }
 
-  // console.log({multiplier})
   return winnings;
 }
 
 function solve(content) {
+  const joker = false;
   const input = toArray(content);
-  const types = getTypes(sortHands(input));
-  console.log(types);
+  const types = getTypes(sortHands(input, joker), joker);
+  return calculateWinnings(input, types);
+}
+
+function solve2(content) {
+  const joker = true;
+  const input = toArray(content);
+  const types = getTypes(sortHands(input, joker), joker);
   return calculateWinnings(input, types);
 }
 
 console.log({
   example1: solve(example1),
   solution1: solve(content),
+  example2: solve2(example1),
+  solution2: solve2(content),
 });
