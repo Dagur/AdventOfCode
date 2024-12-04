@@ -15,9 +15,11 @@ function part1(input) {
 }
 
 function part2(input) {
+  // Find the index of all the do()'s and don't()'s
   const indexes = input
     .matchAll(/(do(?:n't)?\(\))/g)
     .reduce((acc, m) => {
+      // Leave out matches if they are they same as the previous one.
       if (m && m[0] !== acc.at(-1)?.[0]) {
         acc.push(m);
       }
