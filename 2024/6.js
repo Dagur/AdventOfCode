@@ -1,5 +1,5 @@
 const { createInputSelector } = require("./util/inputSelector.js");
-const inputs = createInputSelector(6, true);
+const inputs = createInputSelector(6, false);
 
 const turns = new Map([
   ["N", "E"],
@@ -37,18 +37,22 @@ function move(direction, position, obstacles) {
   }
 }
 
-function getPath(width, height, grid, obstacles) {
+function getPath(width, height, startPos, obstacles) {
   const path = [];
-  let position = getPos(width, grid.indexOf("^"));
+  let position = startPos;
   let direction = "N";
+  let startTime = performance.now();
   while (
     position[0] > 0 &&
     position[0] < width &&
     position[1] > 0 &&
     position[1] < height
   ) {
-    // console.log({ direction, position });
-    path.push(position);
+    const point = `${direction}-${position[0]}-${position[1]}`;
+    if (path.includes(point)) {
+      return;
+    }
+    path.push(point);
     [direction, position] = move(direction, position, obstacles);
   }
 
@@ -59,6 +63,7 @@ function part1(input) {
   const grid = input.replaceAll("\n", "");
   const width = input.indexOf("\n");
   const height = grid.length / width;
+  const startPos = getPos(width, grid.indexOf("^"));
   const obstacles = grid.matchAll("#").reduce((acc, m) => {
     const [row, col] = getPos(width, m.index);
     if (acc[row]) {
@@ -70,8 +75,8 @@ function part1(input) {
   }, {});
 
   const visited = new Set(
-    getPath(width, height, grid, obstacles).map(
-      (position) => `${position[0]}-${position[1]}`
+    getPath(width, height, startPos, obstacles).map((point) =>
+      point.substring(1)
     )
   );
 
@@ -82,6 +87,7 @@ function part2(input) {
   const grid = input.replaceAll("\n", "");
   const width = input.indexOf("\n");
   const height = grid.length / width;
+  const startPos = getPos(width, grid.indexOf("^"));
   const obstacles = grid.matchAll("#").reduce((acc, m) => {
     const [row, col] = getPos(width, m.index);
     if (acc[row]) {
@@ -92,9 +98,22 @@ function part2(input) {
     return acc;
   }, {});
 
-  const path = getPath(width, height, grid, obstacles);
+  const path = getPath(width, height, startPos, obstacles);
+  let loopPoints = new Set();
+  for (const point of path.splice(1)) {
+    const [x, y] = point.split("-").slice(1).map(Number);
+    const blockers = structuredClone(obstacles);
+    if (blockers[x]) {
+      blockers[x].push(y);
+    } else {
+      blockers[x] = [y];
+    }
+    if (getPath(width, height, startPos, blockers) === undefined) {
+      loopPoints.add(point.slice(1));
+    }
+  }
 
-  return path;
+  return loopPoints;
 }
 
 console.log({
