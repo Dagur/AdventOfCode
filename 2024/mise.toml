@@ -2,4 +2,16 @@
 node = "23"
 
 [tasks]
-run = "node 12.js"
+run01 = "node 1.js"
+run02 = "node 2.js"
+run03 = "node 3.js"
+run04 = "node 4.js"
+run05 = "node 5.js"
+run06 = "node 6.js"
+run07 = "node 7.js"
+run08 = "node 8.js"
+run09 = "node 9.js"
+run10 = "node 10.js"
+run11 = "node 11.js"
+run12 = "node 12.js"
+run13 = "node 13.js"
