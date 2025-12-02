@@ -1,0 +1,19 @@
+[tools]
+node = "23"
+
+[tasks]
+run01 = "node 1.mjs"
+run02 = "node 2.mjs"
+run03 = "node 3.mjs"
+run04 = "node 4.mjs"
+run05 = "node 5.mjs"
+run06 = "node 6.mjs"
+run07 = "node 7.mjs"
+run08 = "node 8.mjs"
+run09 = "node 9.mjs"
+run10 = "node 10.mjs"
+run11 = "node 11.mjs"
+run12 = "node 12.mjs"
+run13 = "node 13.mjs"
+run14 = "node 14.mjs"
+run15 = "node 15.mjs"

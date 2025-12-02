@@ -238,4 +238,4 @@ _Pvt_Extensions
 *.o
 
 2023/**/input.txt
-2024/inputs/*
+202*/inputs/*
